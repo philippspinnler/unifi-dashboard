@@ -9,6 +9,7 @@ const axios = require('axios');
 const https = require('https');
 const speedTest = require('speedtest-net');
 const prettyBytes = require('pretty-bytes');
+const timeAgo = require('timeago.js');
 https.globalAgent.options.rejectUnauthorized = false;
 
 const fastify = require('fastify')({
@@ -29,7 +30,13 @@ let speedTestResult = null;
 let speedTestRunning = false;
 
 fastify.get('/', function(request, reply) {
-    reply.sendFile('dashboard.html')
+    reply.sendFile('index.html')
+});
+fastify.get('/style.css', function(request, reply) {
+    reply.sendFile('style.css')
+});
+fastify.get('/dashboard.js', function(request, reply) {
+    reply.sendFile('dashboard.js')
 });
 fastify.get('/scripts/axios.min.js', function (req, reply) {
     reply.sendFile('axios.min.js', path.join(__dirname, 'node_modules', 'axios', 'dist'))
@@ -68,6 +75,9 @@ fastify.get('/api/overall', async function (request, reply) {
     } else if (speedTestResult && speedTestResult.timestamp < (getTimestamp() - 3600000) && !speedTestRunning) {
         runSpeedTest();
     }
+    if (speedTestResult && !speedTestRunning) {
+        speedTestResult.timeAgo = timeAgo.format(speedTestResult.timestamp);
+    }
 
     if (!cookie) {
         const response_login = await axios.post(`${unifiBaseUrl}/api/login`, {
@@ -82,6 +92,19 @@ fastify.get('/api/overall', async function (request, reply) {
             Cookie: cookie
         } 
     });
+    const response_clients = await axios.get(`${unifiBaseUrl}/api/s/default/stat/sta`, {
+        headers:{
+            Cookie: cookie
+        } 
+    });
+    const clients = response_clients.data.data.map(client => {
+        return {
+            name: client.hostname ? client.hostname : client.mac,
+            network: client.network,
+            manufacturer: client.oui,
+            ip: client.ip
+        }
+    });
     let donwloadUsageBps;
     let donwloadUsagePretty;
     let uploadUsageBps;
@@ -91,6 +114,7 @@ fastify.get('/api/overall', async function (request, reply) {
     let warnings = false;
     let wan_ip;
     let uptime;
+    const statuses = [];
     for (const subsystem of response_health.data.data) {
         switch (subsystem.subsystem) {
             case 'www':
@@ -103,6 +127,13 @@ fastify.get('/api/overall', async function (request, reply) {
             case 'wan':
                 wanIp = subsystem.wan_ip;
                 break;
+        }
+
+        if (subsystem.status) {
+            statuses.push({
+                name: subsystem.subsystem,
+                warning: subsystem.status !== 'ok'
+            })
         }
 
         if (subsystem.num_user) {
@@ -131,7 +162,9 @@ fastify.get('/api/overall', async function (request, reply) {
         warnings,
         wanIp,
         uptime,
-        speedTestResult
+        speedTestResult,
+        statuses,
+        clients
     })
 })
 

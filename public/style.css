@@ -1,0 +1,68 @@
+body {
+    font-family: 'Roboto';
+    font-size: 30px;
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+}
+.grid-container-clients {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-gap: 10px;
+}
+.grid-item {
+    background-color: #333333;
+    padding: 34px;
+}
+.grid-item-small {
+    background-color: #333333;
+    padding: 10px;
+    font-size: 20px;
+}
+
+i.large {
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+
+i.x-large {
+    font-size: 120px;
+}
+
+span.uptime {
+    font-size: 20px;
+}
+
+i.great {
+    color: lightgreen;
+}
+
+i.warning {
+    color: orange;
+}
+
+.hidden {
+    display: none;
+}
+
+dt {
+    padding-top: 10px;
+    float: left;
+    clear: left;
+    margin-right: 5px;
+    width: 120px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+dd {
+    padding-top: 10px;
+    margin-left: 0px;
+    text-align: right;
+}
