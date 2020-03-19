@@ -4,6 +4,7 @@ body {
     background-color: black;
     color: white;
     text-align: center;
+    overflow: hidden;
 }
 
 .grid-container {
@@ -65,4 +66,17 @@ dd {
     padding-top: 10px;
     margin-left: 0px;
     text-align: right;
+}
+
+.clients-detail {
+    overflow-y: scroll;
+    height: 396px;
+    text-align: left;
+    font-size: 14px;
+    grid-row: 1 / 6;
+    grid-column: 2 / 4;
+}
+
+.clients-detail::-webkit-scrollbar { 
+    display: none; 
 }
