@@ -1,8 +1,9 @@
 const downloadUsage = document.getElementsByClassName('download-usage')[0];
 const uploadUsage = document.getElementsByClassName('upload-usage')[0];
 const uptime = document.getElementsByClassName('uptime')[0];
-const users = document.getElementsByClassName('users')[0];
-const guests = document.getElementsByClassName('guests')[0];
+const numOfUsers = document.getElementsByClassName('num-of-users')[0];
+const numOfDevices = document.getElementsByClassName('num-of-devices')[0];
+const devicesDetail = document.getElementsByClassName('devices-detail')[0];
 const ip = document.getElementsByClassName('ip')[0];
 const speedtestPing = document.getElementsByClassName('speedtest-ping')[0];
 const speedtestDownload = document.getElementsByClassName('speedtest-download')[0];
@@ -84,8 +85,8 @@ require(['axios'], function (axios) {
                     downloadUsage.innerText = `${data.donwloadUsagePretty}/s`;
                     uploadUsage.innerText = `${data.uploadUsagePretty}/s`;
                     uptime.innerText = uptimeFunc(data.uptime);
-                    users.innerText = data.users;
-                    guests.innerText = data.guests;
+                    numOfUsers.innerText = data.numOfUsers;
+                    numOfDevices.innerText = data.numOfDevices;
                     ip.innerText = data.wanIp;
 
                     statusDetailHtml = '<dl>';
@@ -97,15 +98,76 @@ require(['axios'], function (axios) {
                     statusDetailHtml += '</dl>';
                     statusDetail.innerHTML = statusDetailHtml;
 
-                    clientsDetailHtml = '<div class="grid-container-clients">';
-                    for (const client of data.clients) {
+                    let clients = data.clients.sort(function(a, b) {
+                        const nameA = a.name.toUpperCase();
+                        const nameB = b.name.toUpperCase();
+
+                        let comparison = 0;
+                        if (nameA > nameB) {
+                            comparison = 1;
+                        } else if (nameA < nameB) {
+                            comparison = -1;
+                        }
+                        return comparison;
+                    });
+                    clients = data.clients.sort(function(a, b) {
+                        const networkA = a.network.toUpperCase();
+                        const networkB = b.network.toUpperCase();
+
+                        let comparison = 0;
+                        if (networkA > networkB) {
+                            comparison = 1;
+                        } else if (networkA < networkB) {
+                            comparison = -1;
+                        }
+                        return comparison;
+                    });
+                    let currentNetwork;
+                    let clientsDetailHtml = '<h1><i class="fad fa-users"></i> Clients</h1>';
+                    for (const client of clients) {
+                        if (currentNetwork != client.network) {
+                            if (currentNetwork) {
+                                clientsDetailHtml += '</div>'
+                            }
+                            clientsDetailHtml += `<h2 style="margin-top: 40px;">${client.network}</h2>`;
+                            clientsDetailHtml += '<div class="grid-container-clients">';
+                            currentNetwork = client.network
+                        }
                         clientsDetailHtml += `<div style="overflow: hidden; white-space: nowrap;">${client.name}</div>`;
                         clientsDetailHtml += `<div style="overflow: hidden; white-space: nowrap;">${client.manufacturer}</div>`
-                        clientsDetailHtml += `<div style="overflow: hidden; white-space: nowrap;">${client.network}</div>`
                         clientsDetailHtml += `<div style="overflow: hidden; white-space: nowrap;">${client.ip}</div>`
                     }
                     clientsDetailHtml += '</div>';
                     clientsDetail.innerHTML = clientsDetailHtml;
+
+                    let currentDeviceType;
+                    let devicesDetailHtml = '<h1><i class="fad fa-network-wired"></i> Devices</h1>';
+                    for (const device of data.devices) {
+                        switch (device.type) {
+                            case 'ugw':
+                                device.type = 'Gateways';
+                                break;
+                            case 'usw':
+                                device.type = 'Switches';
+                                break;
+                            case 'uap':
+                                device.type = 'Access Points';
+                                break;
+                        }
+                        if (currentDeviceType != device.type) {
+                            if (currentDeviceType) {
+                                devicesDetailHtml += '</div>'
+                            }
+                            devicesDetailHtml += `<h2 style="margin-top: 40px;">${device.type}</h2>`;
+                            devicesDetailHtml += '<div class="grid-container-devices">';
+                            currentDeviceType = device.type
+                        }
+                        devicesDetailHtml += `<div style="overflow: hidden; white-space: nowrap;">${device.name}</div>`;
+                        devicesDetailHtml += `<div style="overflow: hidden; white-space: nowrap;">${uptimeFunc(device.uptime)}</div>`;
+                        devicesDetailHtml += `<div style="overflow: hidden; white-space: nowrap;">${device.ip}</div>`
+                    }
+                    devicesDetailHtml += '</div>';
+                    devicesDetail.innerHTML = devicesDetailHtml;
 
                     if (data.speedTestResult) {
                         speedtestPing.innerText = `${Math.floor(data.speedTestResult.ping)} ms`;
@@ -137,11 +199,10 @@ require(['axios'], function (axios) {
     document.getElementsByClassName('speedtest-detail')[0].addEventListener('click', function() { toggleDetail('speedtest') });
     document.getElementsByClassName('status')[0].addEventListener('click', function() { toggleDetail('status') });
     document.getElementsByClassName('status-detail')[0].addEventListener('click', function() { toggleDetail('status') });
-    clientsDivs = document.getElementsByClassName('clients');
-    for (const clientsDiv of clientsDivs) {
-        clientsDiv.addEventListener('click', function() {toggleDetail('main-content', 'clients-detail')});
-    }
+    document.getElementsByClassName('clients')[0].addEventListener('click', function() {toggleDetail('main-content', 'clients-detail')});
     document.getElementsByClassName('clients-detail')[0].addEventListener('click', function() { toggleDetail('main-content', 'clients-detail') });
+    document.getElementsByClassName('devices')[0].addEventListener('click', function() {toggleDetail('main-content', 'devices-detail')});
+    document.getElementsByClassName('devices-detail')[0].addEventListener('click', function() { toggleDetail('main-content', 'devices-detail') });
 
     // start interval
     getStatus();

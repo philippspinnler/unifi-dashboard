@@ -97,6 +97,11 @@ fastify.get('/api/overall', async function (request, reply) {
             Cookie: cookie
         } 
     });
+    const response_devices = await axios.get(`${unifiBaseUrl}/api/s/default/stat/device`, {
+        headers:{
+            Cookie: cookie
+        } 
+    });
     const clients = response_clients.data.data.map(client => {
         return {
             name: client.name ? client.name : client.hostname ? client.hostname : client.mac,
@@ -105,15 +110,23 @@ fastify.get('/api/overall', async function (request, reply) {
             ip: client.ip
         }
     });
+    const devices = response_devices.data.data.map(device => {
+        return {
+            type: device.type,
+            name: device.name ? device.name : device.model,
+            ip: device.ip,
+            uptime: device.uptime
+        }
+    });
     let donwloadUsageBps;
     let donwloadUsagePretty;
     let uploadUsageBps;
     let uploadUsagePretty;
-    let users = 0;
-    let guests = 0;
+    let numOfUsers = 0;
     let warnings = false;
     let wan_ip;
     let uptime;
+    let numOfDevices = 0;
     const statuses = [];
     for (const subsystem of response_health.data.data) {
         switch (subsystem.subsystem) {
@@ -126,6 +139,13 @@ fastify.get('/api/overall', async function (request, reply) {
                 break;
             case 'wan':
                 wanIp = subsystem.wan_ip;
+                numOfDevices += subsystem.num_gw
+                break;
+            case 'wlan':
+                numOfDevices += subsystem.num_ap;
+                break;
+            case 'lan':
+                numOfDevices += subsystem.num_sw;
                 break;
         }
 
@@ -137,15 +157,15 @@ fastify.get('/api/overall', async function (request, reply) {
         }
 
         if (subsystem.num_user) {
-            users += subsystem.num_user;
+            numOfUsers += subsystem.num_user;
         }
 
         if (subsystem.num_iot) {
-            users += subsystem.num_iot;
+            numOfUsers += subsystem.num_iot;
         }
 
         if (subsystem.num_guest) {
-            guests += subsystem.num_guest;
+            numOfUsers += subsystem.num_guest;
         }
 
         if (subsystem.status && subsystem.status !== 'ok') {
@@ -157,14 +177,15 @@ fastify.get('/api/overall', async function (request, reply) {
         uploadUsageBps,
         donwloadUsagePretty,
         uploadUsagePretty,
-        users,
-        guests,
+        numOfUsers,
         warnings,
         wanIp,
         uptime,
         speedTestResult,
         statuses,
-        clients
+        clients,
+        numOfDevices,
+        devices
     })
 })
 

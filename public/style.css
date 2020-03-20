@@ -14,7 +14,12 @@ body {
 }
 .grid-container-clients {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-gap: 10px;
+}
+.grid-container-devices {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
     grid-gap: 10px;
 }
 .grid-item {
@@ -68,7 +73,7 @@ dd {
     text-align: right;
 }
 
-.clients-detail {
+.clients-detail, .devices-detail {
     overflow-y: scroll;
     height: 396px;
     text-align: left;
@@ -77,6 +82,6 @@ dd {
     grid-column: 2 / 4;
 }
 
-.clients-detail::-webkit-scrollbar { 
+.clients-detail::-webkit-scrollbar, .devices-detail::-webkit-scrollbar { 
     display: none; 
 }
