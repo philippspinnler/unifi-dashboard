@@ -47,8 +47,11 @@ fastify.get('/scripts/axios.min.map', function (req, reply) {
 fastify.get('/scripts/require.js', function (req, reply) {
     reply.sendFile('require.js', path.join(__dirname, 'node_modules', 'requirejs'))
 });
-fastify.get('/scripts/filesize.js', function (req, reply) {
-    reply.sendFile('index.js', path.join(__dirname, 'node_modules', 'filesize.js', 'lib'))
+fastify.get('/scripts/chartist.min.css', function (req, reply) {
+    reply.sendFile('chartist.min.css', path.join(__dirname, 'node_modules', 'chartist', 'dist'))
+});
+fastify.get('/scripts/chartist.min.js', function (req, reply) {
+    reply.sendFile('chartist.min.js', path.join(__dirname, 'node_modules', 'chartist', 'dist'))
 });
 
 const getTimestamp = function() {

@@ -13,14 +13,18 @@ const status = document.getElementById('status');
 const statusText = document.getElementsByClassName('status-text')[0];
 const statusDetail = document.getElementsByClassName('status-detail')[0];
 const clientsDetail = document.getElementsByClassName('clients-detail')[0];
+const usageDetail = document.getElementsByClassName('usage-detail')[0];
+const downloadGraphData = [];
+const uploadGraphData = [];
 
 require.config({
     paths: {
-        'axios': 'scripts/axios.min'
+        'axios': 'scripts/axios.min',
+        'Chartist': 'srcipt/chartist.min'
     }
 });
 
-require(['axios'], function (axios) {
+require(['axios', 'Chartist'], function (axios, Chartist) {
 
     const toggled = {};
     const toggleDetail = function(className, classNameDetail=null) {
@@ -78,12 +82,51 @@ require(['axios'], function (axios) {
         return 'just now';
     }
 
+    // Chart
+    const data = {
+        series: []
+    };
+    const options = {
+        width: 495,
+        height: 150,
+        showArea:  true,
+        chartPadding: {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        },
+        fullWidth: true,
+        axisY: {
+            showGrid: false,
+            showLabel: false,
+            offset: 0
+        },
+        axisX: {
+            showGrid: false,
+            showLabel: false,
+            offset: 0
+        },
+        showPoint: false
+    };
+    const chart = new Chartist.Line('.usage-detail', data, options);
+
     const getStatus = function() {
         axios.get('api/overall')
                 .then(function (response) {
                     const data = response.data;
                     downloadUsage.innerText = `${data.donwloadUsagePretty}/s`;
                     uploadUsage.innerText = `${data.uploadUsagePretty}/s`;
+                    if (downloadGraphData.length >= 15) {
+                        downloadGraphData.shift();
+                    }
+                    if (uploadGraphData.length >= 15) {
+                        uploadGraphData.shift();
+                    }
+                    downloadGraphData.push(data.donwloadUsageBps / 1024 / 1024);
+                    uploadGraphData.push(data.uploadUsageBps / 1024 / 1024)
+
+                    chart.update({series: [downloadGraphData, uploadGraphData]});
                     uptime.innerText = uptimeFunc(data.uptime);
                     numOfUsers.innerText = data.numOfUsers;
                     numOfDevices.innerText = data.numOfDevices;
@@ -203,6 +246,9 @@ require(['axios'], function (axios) {
     document.getElementsByClassName('clients-detail')[0].addEventListener('click', function() { toggleDetail('main-content', 'clients-detail') });
     document.getElementsByClassName('devices')[0].addEventListener('click', function() {toggleDetail('main-content', 'devices-detail')});
     document.getElementsByClassName('devices-detail')[0].addEventListener('click', function() { toggleDetail('main-content', 'devices-detail') });
+    document.getElementsByClassName('usage')[0].addEventListener('click', function() {toggleDetail('usage', 'usage-detail')});
+    document.getElementsByClassName('usage')[1].addEventListener('click', function() {toggleDetail('usage', 'usage-detail')});
+    document.getElementsByClassName('usage-detail')[0].addEventListener('click', function() { toggleDetail('usage', 'usage-detail') });
 
     // start interval
     getStatus();

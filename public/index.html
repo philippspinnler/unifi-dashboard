@@ -8,6 +8,7 @@
     <script src="scripts/require.js"></script>
     <script src="https://kit.fontawesome.com/d98132bac4.js" crossorigin="anonymous"></script>
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link href="scripts/chartist.min.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
 </head>
 <body>
@@ -22,8 +23,10 @@
 
         <div class="grid-item devices-detail hidden"></div>
         
-        <div class="grid-item main-content"><i class="fad fa-download large"></i><br><span class="download-usage"></span></div>
-        <div class="grid-item main-content"><i class="fad fa-upload large"></i><br><span class="upload-usage"></span></div>
+        <div class="grid-item main-content usage"><i class="fad fa-download large"></i><br><span class="download-usage"></span></div>
+        <div class="grid-item main-content usage"><i class="fad fa-upload large"></i><br><span class="upload-usage"></span></div>
+
+        <div class="grid-item usage-detail hidden"></div>
         
         <div class="grid-item main-content clients"><i class="fad fa-users large"></i><br><span class="num-of-users"></span></div>
         <div class="grid-item main-content devices"><i class="fad fa-network-wired large"></i><br><span class="num-of-devices"></span></div>
@@ -37,7 +40,7 @@
 
         <div class="grid-item-small speedtest-detail hidden" style="grid-column: 1 / 4;"><i class="fad fa-info-circle"></i> Last speedtest <span class="speedtest-ago"></span></div>
     </div>
-
+    <script src="scripts/chartist.min.js"></script>
     <script src="dashboard.js"></script>
 </body>
 </html>

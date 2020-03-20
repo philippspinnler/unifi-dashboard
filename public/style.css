@@ -85,3 +85,24 @@ dd {
 .clients-detail::-webkit-scrollbar, .devices-detail::-webkit-scrollbar { 
     display: none; 
 }
+
+.usage-detail {
+    grid-column: 2 / 4;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+}
+
+.ct-series-a .ct-line {
+    stroke: lightgreen;
+}
+.ct-series-a .ct-area {
+    fill: lightgreen;
+}
+.ct-series-b .ct-line {
+    stroke: orange;
+}
+.ct-series-b .ct-area {
+    fill: orange;
+}
