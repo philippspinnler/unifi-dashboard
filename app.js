@@ -99,7 +99,7 @@ fastify.get('/api/overall', async function (request, reply) {
     });
     const clients = response_clients.data.data.map(client => {
         return {
-            name: client.hostname ? client.hostname : client.mac,
+            name: client.name ? client.name : client.hostname ? client.hostname : client.mac,
             network: client.network,
             manufacturer: client.oui,
             ip: client.ip
