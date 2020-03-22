@@ -94,13 +94,14 @@ require(['axios', 'Chartist'], function (axios, Chartist) {
             top: 0,
             right: 0,
             bottom: 0,
-            left: 0
+            left: -50
         },
         fullWidth: true,
         axisY: {
             showGrid: false,
-            showLabel: false,
-            offset: 0
+            labelOffset: {
+                x: 50,
+            },
         },
         axisX: {
             showGrid: false,

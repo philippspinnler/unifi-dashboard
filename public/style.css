@@ -106,3 +106,7 @@ dd {
 .ct-series-b .ct-area {
     fill: orange;
 }
+.ct-label {
+    color: white;
+    font-size: 18px;
+}
