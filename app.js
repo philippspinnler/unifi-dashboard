@@ -1,8 +1,11 @@
 // config
-unifiBaseUrl = process.env.UNIFI_BASE_URL;
+/*unifiBaseUrl = process.env.UNIFI_BASE_URL;
 unifiUsername = process.env.UNIFI_USERNAME;
-unifiPassword = process.env.UNIFI_PASSWORD;
+unifiPassword = process.env.UNIFI_PASSWORD;*/
 
+const unifiBaseUrl = "https://10.0.86.10:8443";
+const unifiUsername = "api";
+const unifiPassword = "Ljs-AxvLkwGjYAtPJJuD6-kjdkEy4.";
 
 const path = require('path')
 const axios = require('axios');
@@ -18,7 +21,7 @@ const fastify = require('fastify')({
 
 fastify.register(require('fastify-static'), {
     root: path.join(__dirname, 'public'),
-    prefix: '/public/',
+    prefix: '/public/'
 })
 
 const agent = new https.Agent({  
@@ -34,6 +37,9 @@ fastify.get('/', function(request, reply) {
 });
 fastify.get('/style.css', function(request, reply) {
     reply.sendFile('style.css')
+});
+fastify.get('/fontawesome/*', function (request, reply) {
+    reply.sendFile(path.join('fontawesome', request.params['*']));
 });
 fastify.get('/dashboard.js', function(request, reply) {
     reply.sendFile('dashboard.js')
@@ -52,6 +58,9 @@ fastify.get('/scripts/chartist.min.css', function (req, reply) {
 });
 fastify.get('/scripts/chartist.min.js', function (req, reply) {
     reply.sendFile('chartist.min.js', path.join(__dirname, 'node_modules', 'chartist', 'dist'))
+});
+fastify.get('/scripts/chartist.min.js.map', function (req, reply) {
+    reply.sendFile('chartist.min.js.map', path.join(__dirname, 'node_modules', 'chartist', 'dist'))
 });
 
 const getTimestamp = function() {
