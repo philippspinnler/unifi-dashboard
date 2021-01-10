@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chartist": "^0.11.4",
     "fastify": "^2.15.1",
     "fastify-cors": "^5.1.0",
