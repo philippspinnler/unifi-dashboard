@@ -1,11 +1,7 @@
 // config
-/*unifiBaseUrl = process.env.UNIFI_BASE_URL;
-unifiUsername = process.env.UNIFI_USERNAME;
-unifiPassword = process.env.UNIFI_PASSWORD;*/
-
-const unifiBaseUrl = "https://10.0.86.10:8443";
-const unifiUsername = "api";
-const unifiPassword = "Ljs-AxvLkwGjYAtPJJuD6-kjdkEy4.";
+const unifiBaseUrl = process.env.UNIFI_BASE_URL;
+const unifiUsername = process.env.UNIFI_USERNAME;
+const unifiPassword = process.env.UNIFI_PASSWORD;
 
 const path = require('path')
 const axios = require('axios');
@@ -112,6 +108,11 @@ fastify.get('/api/overall', async function (request, reply) {
             Cookie: cookie
         } 
     });
+    const response_sysinfo = await axios.get(`${unifiBaseUrl}/api/s/default/stat/sysinfo`, {
+        headers: {
+            Cookie: cookie
+        }
+    });
     const response_devices = await axios.get(`${unifiBaseUrl}/api/s/default/stat/device`, {
         headers:{
             Cookie: cookie
@@ -139,8 +140,8 @@ fastify.get('/api/overall', async function (request, reply) {
     let uploadUsagePretty;
     let numOfUsers = 0;
     let warnings = false;
-    let wan_ip;
-    let uptime;
+    let wanIp;
+    let uptime = response_sysinfo.data.data[0].uptime;
     let numOfDevices = 0;
     const statuses = [];
     for (const subsystem of response_health.data.data) {
@@ -150,7 +151,6 @@ fastify.get('/api/overall', async function (request, reply) {
                 uploadUsageBps = subsystem['tx_bytes-r'] * 8;
                 donwloadUsagePretty = prettyBytes(donwloadUsageBps, {bits: true});
                 uploadUsagePretty = prettyBytes(uploadUsageBps, {bits: true});
-                uptime = subsystem.uptime;
                 break;
             case 'wan':
                 wanIp = subsystem.wan_ip;
