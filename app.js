@@ -91,29 +91,29 @@ fastify.get('/api/overall', async function (request, reply) {
     }
 
     if (!cookie) {
-        const response_login = await axios.post(`${unifiBaseUrl}/api/login`, {
+        const response_login = await axios.post(`${unifiBaseUrl}/api/auth/login`, {
             username: unifiUsername,
             password: unifiPassword
             });
         cookie = response_login.headers['set-cookie'][0];
     }
     
-    const response_health = await axios.get(`${unifiBaseUrl}/api/s/default/stat/health`, {
+    const response_health = await axios.get(`${unifiBaseUrl}/proxy/network/api/s/default/stat/health`, {
         headers:{
             Cookie: cookie
         } 
     });
-    const response_clients = await axios.get(`${unifiBaseUrl}/api/s/default/stat/sta`, {
+    const response_clients = await axios.get(`${unifiBaseUrl}/proxy/network/api/s/default/stat/sta`, {
         headers:{
             Cookie: cookie
         } 
     });
-    const response_sysinfo = await axios.get(`${unifiBaseUrl}/api/s/default/stat/sysinfo`, {
+    const response_sysinfo = await axios.get(`${unifiBaseUrl}/proxy/network/api/s/default/stat/sysinfo`, {
         headers: {
             Cookie: cookie
         }
     });
-    const response_devices = await axios.get(`${unifiBaseUrl}/api/s/default/stat/device`, {
+    const response_devices = await axios.get(`${unifiBaseUrl}/proxy/network/api/s/default/stat/device`, {
         headers:{
             Cookie: cookie
         } 
